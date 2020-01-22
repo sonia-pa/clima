@@ -8,7 +8,9 @@
 import CoreData
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(weather: WeatherModel)
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    func didFailedWithError(error: Error)
+    
 }
 
 struct WeatherManager {
@@ -18,12 +20,12 @@ struct WeatherManager {
     
     func fetchWeather(cityName: String)  {
         let urlString = "\(weatherURL)&q=\(cityName)"
-        self.performRequest(urlString: urlString)
+        self.performRequest(with: urlString)
         print(urlString)
     }
     
     /* Inside a closure, we msut put self, if we are calling the methid that belongs to the class. Otherwise, it will confuse */
-    func performRequest(urlString: String){
+    func performRequest(with urlString: String){
         //1. create a URL
         
         if let url = URL(string: urlString) {
@@ -35,14 +37,15 @@ struct WeatherManager {
             let task = session.dataTask(with: url) {(data, response, error) in
                 
                 if error != nil {
-                    print(error!)
+                    self.delegate?.didFailedWithError(error: error!)
+//                    print(error!)
                     return
                     
                 }
                 if let safeData = data {
-                    if let weather = self.parseJSON(weatherData: safeData){
+                    if let weather = self.parseJSON(safeData){
                         let weatherVC = WeatherViewController()
-                        self.delegate?.didUpdateWeather(weather: weather)
+                        self.delegate?.didUpdateWeather(self, weather: weather)
                     }
                     //                let dataString = String(data: safeData, encoding: .utf8)
                     //                print(dataString)
@@ -58,7 +61,7 @@ struct WeatherManager {
         
     }
     
-    func parseJSON(weatherData: Data) -> WeatherModel?{
+    func parseJSON(_ weatherData: Data) -> WeatherModel?{
         let decoder = JSONDecoder()
         do{
             // the decoder will create a weather data object
@@ -72,7 +75,8 @@ struct WeatherManager {
             return weather
 //            print(weather.conditionName)
         } catch {
-            print(error)
+            delegate?.didFailedWithError(error: error)
+//            print(error)
             return nil
         }
     }

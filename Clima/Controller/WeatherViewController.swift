@@ -1,12 +1,9 @@
-
-//  ViewController.swift
-//  Clima
-
 import UIKit
 
 class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
    
-//    @IBOutlet weak var searchTextField: UITextField!
+    
+
     @IBOutlet weak var searchTextField: UITextField!
     
     @IBOutlet weak var conditionImageView: UIImageView!
@@ -25,8 +22,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         
     }
     @IBAction func searchPressed(_ sender: UIButton) {
-        
-//        searchTextField.endEditing(true)
+
         cityName = searchTextField.text!
         
         cityLabel.text = cityName
@@ -34,18 +30,10 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
          searchTextField.endEditing(true)
     }
     
-//    @IBAction func searchPressed(_ sender: UIButton) {
-//        /*Tells that we are done editing so hide the keyboard */
-//        searchTextField.endEditing(true)
-//        print(searchTextField.text!)
-//    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-//        searchTextField.endEditing(true)
         print(searchTextField.text ?? "ew")
-        
         searchTextField.endEditing(true)
-//        print("dmk")
         return true
     }
     
@@ -58,7 +46,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         }
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-        // user searchTextField.text to get the weather of the city
+        /* user searchTextField.text to get the weather of the city */
         
         if let city = searchTextField.text {
             weatherManager.fetchWeather(cityName: city)
@@ -66,13 +54,14 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         searchTextField.text = ""
     }
     
-    func didUpdateWeather(weather: WeatherModel) {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         print(weather.temperature)
        }
        
-//    func didUpdateWeather(weather: WeatherModel){
-//        print(weather.temperature)
-//    }
+    func didFailedWithError(error: Error) {
+           print(error)
+       }
+
     
 }
 
