@@ -1,10 +1,7 @@
-//
+
 //  WeatherManager.swift
 //  Clima
-//
 //  Created by Sonia Puertas Acosta on 1/19/20.
-//  Copyright © 2020 App Brewery. All rights reserved.
-//
 import CoreData
 
 protocol WeatherManagerDelegate {
@@ -24,7 +21,7 @@ struct WeatherManager {
         print(urlString)
     }
     
-    /* Inside a closure, we msut put self, if we are calling the methid that belongs to the class. Otherwise, it will confuse */
+    /* Inside a closure, we msut put self, if we are calling the method that belongs to the class. Otherwise, it will confuse */
     func performRequest(with urlString: String){
         //1. create a URL
         
@@ -52,7 +49,6 @@ struct WeatherManager {
                     
                 }
             }
-            /* json is a javascript objec (string) that shrinks a lit of data   */
             //4. Start the task
             task.resume()
             
@@ -73,10 +69,8 @@ struct WeatherManager {
             
             let weather = WeatherModel(conditionId: id, cityName: name, temperature: temp)
             return weather
-//            print(weather.conditionName)
         } catch {
             delegate?.didFailedWithError(error: error)
-//            print(error)
             return nil
         }
     }

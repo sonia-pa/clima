@@ -1,9 +1,8 @@
 import UIKit
+import CoreLocation
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
-   
+class WeatherViewController: UIViewController {
     
-
     @IBOutlet weak var searchTextField: UITextField!
     
     @IBOutlet weak var conditionImageView: UIImageView!
@@ -18,18 +17,17 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         weatherManager.delegate = self
         // initialize delegates who is the delegate
         searchTextField.delegate = self
-        
-        
-    }
-    @IBAction func searchPressed(_ sender: UIButton) {
-
-        cityName = searchTextField.text!
-        
-        cityLabel.text = cityName
-        print(searchTextField.text!)
-         searchTextField.endEditing(true)
     }
     
+}
+//MARK: - UITextFieldDelegate
+extension WeatherViewController: UITextFieldDelegate{
+    @IBAction func searchPressed(_ sender: UIButton) {
+        cityName = searchTextField.text!
+        cityLabel.text = cityName
+        print(searchTextField.text!)
+        searchTextField.endEditing(true)
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print(searchTextField.text ?? "ew")
@@ -53,16 +51,21 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         }
         searchTextField.text = ""
     }
-    
-    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        print(weather.temperature)
-       }
-       
-    func didFailedWithError(error: Error) {
-           print(error)
-       }
-
-    
 }
 
-
+//MARK: - WeatherManagerDelegate
+extension WeatherViewController: WeatherManagerDelegate {
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
+        /*DispatchQueue is used to make sure we are running asyn and the compeltion handler finish its task before we attempt to display into the View controller */
+        DispatchQueue.main.async {
+            self.temperatureLabel.text = weather.temperatureString
+            self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+        }
+        
+        //        print(weather.temperature)
+    }
+    
+    func didFailedWithError(error: Error) {
+        print(error)
+    }
+}

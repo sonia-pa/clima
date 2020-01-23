@@ -1,8 +1,7 @@
 
 import Foundation
-/* there exits two different protocol Decodable and Encodable
-   However, there is a combined protocol "codable" that performs
-   both
+/*
+ Codable protocol decodes and decodes objects
  */
 struct WeatherData: Codable {
     let name: String
