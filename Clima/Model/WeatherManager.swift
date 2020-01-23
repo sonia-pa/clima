@@ -3,6 +3,7 @@
 //  Clima
 //  Created by Sonia Puertas Acosta on 1/19/20.
 import CoreData
+import CoreLocation
 
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
@@ -18,7 +19,12 @@ struct WeatherManager {
     func fetchWeather(cityName: String)  {
         let urlString = "\(weatherURL)&q=\(cityName)"
         self.performRequest(with: urlString)
-        print(urlString)
+//        print(urlString)
+    }
+    
+    func fetchWeather(latitude: CLLocationDegrees, longitude: CLLocationDegrees){
+        let urlString = "\(weatherURL)&lat=\(latitude)&lon=\(longitude)"
+        self.performRequest(with: urlString)
     }
     
     /* Inside a closure, we msut put self, if we are calling the method that belongs to the class. Otherwise, it will confuse */

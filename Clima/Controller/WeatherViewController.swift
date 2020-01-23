@@ -10,13 +10,25 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var cityLabel: UILabel!
     
     var weatherManager = WeatherManager()
+    let locationManager = CLLocationManager()
     var cityName = " "
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self
         weatherManager.delegate = self
         // initialize delegates who is the delegate
         searchTextField.delegate = self
+        
+        locationManager.requestWhenInUseAuthorization()
+        /* currently updates back when the user updates his/her location */
+//        locationManager.startUpdatingLocation()
+        locationManager.requestLocation()
+    
+    }
+
+    @IBAction func locationPressed(_ sender: UIButton) {
+        locationManager.requestLocation()
     }
     
 }
@@ -60,12 +72,30 @@ extension WeatherViewController: WeatherManagerDelegate {
         DispatchQueue.main.async {
             self.temperatureLabel.text = weather.temperatureString
             self.conditionImageView.image = UIImage(systemName: weather.conditionName)
+            self.cityLabel.text = weather.cityName
         }
         
-        //        print(weather.temperature)
     }
     
     func didFailedWithError(error: Error) {
+        print(error)
+    }
+}
+//MARK: - CLLocationManagerDelegate
+extension WeatherViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        /* gets the last element of the location list*/
+        if let location = locations.last{
+            locationManager.stopUpdatingLocation()
+            let lat = location.coordinate.latitude
+            let lon = location.coordinate.longitude
+//            print(lat)
+//            print(lon)
+            weatherManager.fetchWeather(latitude: lat, longitude: lon)
+        }
+       
+    }
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }
 }
